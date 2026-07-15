@@ -1,0 +1,59 @@
+package config
+
+import (
+	"errors"
+	"log/slog"
+
+	"github.com/zoido/yag-config"
+
+	"github.com/zoido/gou/internal/exec/logging"
+)
+
+// Config represents the configuration for the gou application.
+type Config struct {
+	File    string
+	Logging logging.Config
+}
+
+// PrintUsageError is an error type used to indicate that the usage of the application
+// should be printed.
+type PrintUsageError struct {
+	// Usage is the usage information to be printed.
+	Usage string
+}
+
+func (PrintUsageError) Error() string {
+	return yag.ErrHelp.Error()
+}
+
+// ParseConfig parses the command-line arguments and environment variables and returns
+// the configuration.
+func ParseConfig(args []string) (Config, error) {
+	cfg := Config{}
+
+	y := yag.New()
+	cfg.register(y)
+
+	err := y.Parse(args)
+	if errors.Is(err, yag.ErrHelp) {
+		return Config{}, PrintUsageError{Usage: y.Usage()}
+	}
+	if err != nil {
+		return Config{}, err
+	}
+
+	return cfg, nil
+}
+
+// LogValue implements the [slog.LogValuer] interface.
+func (cfg Config) LogValue() slog.Value {
+	return slog.GroupValue(
+		slog.String("file", cfg.File),
+		slog.Any("logging", cfg.Logging),
+	)
+}
+
+func (cfg *Config) register(y *yag.Parser) {
+	y.String(&cfg.File, "file", "File where to scan for URLs, if not provided STDIN is used.")
+	cfg.Logging.Register(y)
+}
