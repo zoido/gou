@@ -11,7 +11,6 @@ import (
 	"syscall"
 	"time"
 
-	tea "charm.land/bubbletea/v2"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/zoido/gou/internal/exec/app/config"
@@ -66,21 +65,18 @@ func Run(ctx context.Context, args []string) error {
 	grp, grpCtx := errgroup.WithContext(ctx)
 	success := make(chan struct{})
 	grp.Go(func() error {
-		findings, err := scanner.FindURLs(ctx, reader)
+		findings, err := scanner.FindURLs(grpCtx, reader)
 		if err != nil {
 			return err
 		}
 		closeInput() // We don't need it anymore so we do not need to hold it.
 
-		p := tea.NewProgram(ui.NewList(findings))
-
-		_, err = p.Run()
+		pick, err := ui.Pick(grpCtx, findings)
 		if err != nil {
 			return err
 		}
-		for _, f := range findings {
-			fmt.Println(f.URL())
-		}
+		fmt.Println(pick.URL())
+
 		close(success)
 		return nil
 	})
