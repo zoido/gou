@@ -1,8 +1,7 @@
 package dispatch
 
 import (
-	"fmt"
-	"strings"
+	"github.com/rkoesters/xdg"
 
 	"github.com/zoido/gou/internal/domain/finding"
 )
@@ -18,9 +17,7 @@ func (d *Dispatcher) Dispatch(key string, f finding.Finding) (bool, error) {
 
 	switch key {
 	case "enter":
-		if strings.HasPrefix(f.URL(), "gemini://") {
-			return false, fmt.Errorf("gemini not supported")
-		}
+		return false, xdg.Open(f.URL())
 	}
 
 	return doQuit, nil
