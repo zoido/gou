@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/zoido/gou/internal/dispatch"
 	"github.com/zoido/gou/internal/exec/app/config"
 )
 
@@ -18,12 +19,16 @@ type Factory struct {
 
 	// InputOpener returns function that opens configured input stream for reading.
 	InputOpener func() InputOpener
+
+	// Dispatcher returns action dispatcher.
+	Dispatcher func() *dispatch.Dispatcher
 }
 
 // New returns a new [Factory] using the provided [cfg].
 func New(cfg config.Config) *Factory {
 	f := &Factory{cfg: cfg}
 	f.InputOpener = sync.OnceValue(f.createInputOpener)
+	f.Dispatcher = sync.OnceValue(f.createDispatcher)
 	return f
 }
 
@@ -41,4 +46,8 @@ func (f *Factory) createInputOpener() InputOpener {
 		}
 		return os.Open(abs)
 	}
+}
+
+func (f *Factory) createDispatcher() *dispatch.Dispatcher {
+	return dispatch.NewDispatcher()
 }

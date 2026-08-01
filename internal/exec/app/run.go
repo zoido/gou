@@ -51,6 +51,8 @@ func Run(ctx context.Context, args []string) error {
 
 	f := factory.New(cfg)
 
+	dispatcher := f.Dispatcher()
+
 	open := f.InputOpener()
 	reader, err := open()
 	if err != nil {
@@ -71,11 +73,10 @@ func Run(ctx context.Context, args []string) error {
 		}
 		closeInput() // We don't need it anymore so we do not need to hold it.
 
-		pick, err := ui.Pick(grpCtx, findings)
+		err = ui.Serve(grpCtx, findings, dispatcher.Dispatch)
 		if err != nil {
 			return err
 		}
-		fmt.Println(pick.URL())
 
 		close(success)
 		return nil

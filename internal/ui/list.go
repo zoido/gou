@@ -13,6 +13,8 @@ import (
 // ErrNoSelection is returned when the user quits the picker without selecting an item.
 var ErrNoSelection = errors.New("no finding selected")
 
+const extraHeight = 4 // title=2, help=2
+
 type item struct {
 	v *finding.Finding
 }
@@ -21,82 +23,95 @@ func (i item) Title() string       { return i.v.URL() }
 func (i item) Description() string { return "" }
 func (i item) FilterValue() string { return i.v.URL() }
 
-type List struct {
-	list  list.Model
-	count int
-	pick  *finding.Finding
-}
+type dispatchFn func(string, finding.Finding) (doQuit bool, err error)
 
-func (m List) Init() tea.Cmd {
-	return nil
-}
-
-func (m List) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case tea.KeyPressMsg:
-		return m.handleKeys(msg)
-	case tea.WindowSizeMsg:
-		m.list.SetSize(msg.Width, min(m.count+2, msg.Height))
-	}
-
-	var cmd tea.Cmd
-	m.list, cmd = m.list.Update(msg)
-	return m, cmd
-}
-
-func (m List) handleKeys(kp tea.KeyPressMsg) (tea.Model, tea.Cmd) {
-	switch kp.String() {
-	case "q":
-		return m, tea.Quit
-	case "enter":
-		i, ok := m.list.SelectedItem().(item)
-		if ok {
-			m.pick = i.v
-		}
-		return m, tea.Quit
-	}
-
-	var cmd tea.Cmd
-	m.list, cmd = m.list.Update(kp)
-	return m, cmd
-}
-
-func (m List) View() tea.View {
-	v := tea.NewView(m.list.View())
-	v.AltScreen = false
-	return v
-}
-
-func Pick(ctx context.Context, findings []finding.Finding) (finding.Finding, error) {
+func Serve(
+	ctx context.Context,
+	findings []finding.Finding,
+	dispatch dispatchFn,
+) error {
 	items := make([]list.Item, len(findings))
 	for i, f := range findings {
 		items[i] = item{v: &f}
 	}
 
-	delegate := list.NewDefaultDelegate()
-	delegate.ShowDescription = false
-	delegate.SetSpacing(0)
+	d := list.NewDefaultDelegate()
+	d.ShowDescription = false
+	d.SetSpacing(0)
 
-	l := list.New(items, delegate, 0, 0)
-	l.SetShowTitle(false)
+	l := list.New(items, d, 0, 0)
+
+	l.Title = "GoU"
+	l.SetShowTitle(true)
+
 	l.SetShowStatusBar(false)
 	l.SetFilteringEnabled(false)
 	l.SetShowPagination(false)
 
 	p := tea.NewProgram(
-		&List{
-			list:  l,
-			count: len(items),
+		&Model{
+			listModel: l,
+			dispatch:  dispatch,
+			findings:  findings,
 		},
-		tea.WithContext(ctx))
-	finalModel, err := p.Run()
+		tea.WithContext(ctx),
+	)
+
+	_, err := p.Run()
+	if errors.Is(err, tea.ErrProgramKilled) {
+		return ctx.Err()
+	}
 	if err != nil {
-		return finding.Finding{}, err
+		return err
 	}
 
-	m, ok := finalModel.(List)
-	if !ok || m.pick == nil {
-		return finding.Finding{}, ErrNoSelection
+	return nil
+}
+
+type Model struct {
+	listModel list.Model
+	findings  []finding.Finding
+	dispatch  dispatchFn
+}
+
+func (m Model) Init() tea.Cmd {
+	return nil
+}
+
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyPressMsg:
+		return m.handleKeys(msg)
+	case tea.WindowSizeMsg:
+		m.listModel.SetSize(msg.Width, min(len(m.findings)+extraHeight, msg.Height))
 	}
-	return *m.pick, nil
+
+	var cmd tea.Cmd
+	m.listModel, cmd = m.listModel.Update(msg)
+	return m, cmd
+}
+
+func (m Model) handleKeys(kp tea.KeyPressMsg) (tea.Model, tea.Cmd) {
+	if kp.String() == "q" {
+		return m, tea.Quit
+	}
+
+	i := m.listModel.Index()
+	doQuit, err := m.dispatch(kp.String(), m.findings[i])
+	if doQuit {
+		return m, tea.Quit
+	}
+	if err != nil {
+		m.listModel.NewStatusMessage(err.Error())
+	}
+
+	var cmd tea.Cmd
+	m.listModel, cmd = m.listModel.Update(kp)
+	return m, cmd
+}
+
+func (m Model) View() tea.View {
+	v := tea.NewView(m.listModel.View())
+	v.AltScreen = false
+	return v
 }
