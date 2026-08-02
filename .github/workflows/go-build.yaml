@@ -32,12 +32,12 @@ jobs:
             ${{ runner.os }}-gobuild-build-
 
       - name: Go Mod Cache
-        uses: actions/cache@v6
+        uses: actions/cache/restore@v6
         with:
           path: ${{ steps.go-cache-paths.outputs.go-mod }}
-          key: ${{ runner.os }}-gobuild-mod-${{ hashFiles('**/go.sum') }}
+          key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
           restore-keys: |
-            ${{ runner.os }}-gobuild-mod-
+            ${{ runner.os }}-gomod-
 
       - run: |
           go build -v .

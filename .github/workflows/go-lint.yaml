@@ -11,7 +11,21 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
+          cache: false
           go-version-file: go.mod
+
+      - id: go-cache-paths
+        run: |
+          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
+          mkdir -p "$(go env GOMODCACHE)"
+
+      - name: Go Mod Cache
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
+          key: ${{ runner.os }}-gomod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-gomod-
 
       - name: Run golangci-lint
         id: golangci-lint
