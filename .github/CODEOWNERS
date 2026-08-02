@@ -1,0 +1,5 @@
+* @zoido
+
+# Some explicit extra protection.
+/.github/ @zoido
+/.github/CODEOWNERS @zoido

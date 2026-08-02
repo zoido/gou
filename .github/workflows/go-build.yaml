@@ -1,0 +1,43 @@
+name: "Go: Build"
+on:
+  workflow_call: {}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          cache: false
+          go-version-file: go.mod
+
+
+      - id: go-cache-paths
+        run: |
+          echo "go-build=$(go env GOCACHE)" >> $GITHUB_OUTPUT
+          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
+
+          mkdir -p "$(go env GOMODCACHE)"
+          mkdir -p "$(go env GOCACHE)"
+
+      - name: Go Build Cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-build }}
+          key: ${{ runner.os }}-gobuild-build-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-gobuild-build-
+
+      - name: Go Mod Cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
+          key: ${{ runner.os }}-gobuild-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-gobuild-mod-
+
+      - run: |
+          go build -v .
