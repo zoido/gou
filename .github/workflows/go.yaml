@@ -5,18 +5,34 @@ on:
   pull_request:
 
 jobs:
+  cache-warmup:
+    name: "Go: Cache Warmup"
+    uses: ./.github/workflows/go-cache-warmup.yaml
+
+  proceed:
+     # Dummy jobs thatr ensures that checks run even when the cache-warmup job fails.
+     runs-on: ubunut-latest
+     needs: cache-warmup
+     if: ${{ always() }}
+     steps:
+        - run: "true"
+
   lint:
     name: "Go: Lint"
+    needs: proceed
     uses: ./.github/workflows/go-lint.yaml
 
   build:
     name: "Go: Build"
+    needs: proceed
     uses: ./.github/workflows/go-build.yaml
 
   test:
     name: "Go: Test"
+    needs: proceed
     uses: ./.github/workflows/go-test.yaml
 
   mod-tidy:
     name: "Go: Check go.mod"
+    needs: proceed
     uses: ./.github/workflows/go-mod-tidy.yaml
