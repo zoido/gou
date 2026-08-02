@@ -34,6 +34,9 @@ jobs:
     name: "Go: Test"
     needs: proceed
     uses: ./.github/workflows/go-test.yaml
+    permissions:
+      contents: read
+      code-quality: write
 
   mod-tidy:
     name: "Go: Check go.mod"
