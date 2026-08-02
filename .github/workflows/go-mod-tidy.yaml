@@ -2,6 +2,9 @@ name: "Go: Check go.mod"
 on:
   workflow_call: {}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Check go.mod
