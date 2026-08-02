@@ -11,4 +11,3 @@ It's an alternative to [urlscan][1] or [urlview][2].
 
 [1]: https://github.com/firecat53/urlscan
 [2]: https://github.com/sigpipe/urlview
-
