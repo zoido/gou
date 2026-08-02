@@ -9,11 +9,11 @@ linters:
     - dupword
     - errname
     - godot
-    - impoirtas
+    - importas
     - misspell
     - modernize
     - nilerr
-    - nilnesser
+    - nilnesserr
     - noctx
     - nolintlint
     - prealloc
