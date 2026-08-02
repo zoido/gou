@@ -50,7 +50,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gomod-
 
-      - name: Build
+      - name: Release
         uses: goreleaser/goreleaser-action@v7
         with:
-          args: release --clean --snapshot
+          args: release --clean
