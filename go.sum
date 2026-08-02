@@ -1,0 +1,4 @@
+github.com/nalgeon/be v0.3.0 h1:QsPANqEtcOD5qT2S3KAtIkDBBn8SXUf/Lb5Bi/z4UqM=
+github.com/nalgeon/be v0.3.0/go.mod h1:PMwMuBLopwKJkSHnr2qHyLcZYUTqNejN7A8RAqNWO3E=
+mvdan.cc/xurls/v2 v2.6.0 h1:3NTZpeTxYVWNSokW3MKeyVkz/j7uYXYiMtXRUfmjbgI=
+mvdan.cc/xurls/v2 v2.6.0/go.mod h1:bCvEZ1XvdA6wDnxY7jPPjEmigDtvtvPXAD/Exa9IMSk=
