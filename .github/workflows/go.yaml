@@ -10,12 +10,12 @@ jobs:
     uses: ./.github/workflows/go-cache-warmup.yaml
 
   proceed:
-     # Dummy jobs thatr ensures that checks run even when the cache-warmup job fails.
-     runs-on: ubuntu-latest
-     needs: cache-warmup
-     if: ${{ always() }}
-     steps:
-        - run: "true"
+    # Dummy jobs thatr ensures that checks run even when the cache-warmup job fails.
+    runs-on: ubuntu-latest
+    needs: cache-warmup
+    if: ${{ always() }}
+    steps:
+      - run: "true"
 
   lint:
     name: "Go: Lint"

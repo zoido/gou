@@ -2,9 +2,7 @@
   "packages": {
     ".": {
       "changelog-path": "CHANGELOG.md",
-      "release-type": "go",
-      "draft-pull-request": true,
-      "always-update": true
+      "release-type": "go"
     }
   },
   "pull-request-title-pattern": "chore${scope}: 🔖 release${component} ${version}",
@@ -12,6 +10,7 @@
   "separate-pull-requests": true,
   "draft-pull-request": true,
   "always-update": true,
+  "draft": true,
   "plugins": [
     "sentence-case"
   ],

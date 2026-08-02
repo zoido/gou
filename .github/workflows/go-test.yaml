@@ -14,7 +14,6 @@ jobs:
           cache: false
           go-version-file: go.mod
 
-
       - name: Determine Go Cache Paths
         id: go-cache-paths
         run: |
@@ -42,4 +41,3 @@ jobs:
 
       - run: |
           go test -v ./...
-

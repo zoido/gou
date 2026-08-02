@@ -14,7 +14,6 @@ jobs:
           cache: false
           go-version-file: go.mod
 
-
       - id: go-cache-paths
         run: |
           echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
