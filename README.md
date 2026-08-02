@@ -12,10 +12,8 @@ An alternative to [urlscan][1] or [urlview][2].
 [1]: https://github.com/firecat53/urlscan
 [2]: https://github.com/sigpipe/urlview
 
-
 ## Shoulders of Giants
 
 Combines the prior work done available.
 
 - [xurls](mvdan.cc/xurls/v2)
-
