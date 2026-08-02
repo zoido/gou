@@ -49,6 +49,9 @@ linters:
         - name: useless-break
         - name: waitgroup-by-value
 
+        - name: package-comments
+          disabled: true
+
     nolintlint:
       require-explanation: true
       require-specific: true
