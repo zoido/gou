@@ -1,5 +1,8 @@
 name: Release
 run-name: Process Release on ${{ github.event.workflow_run.head_branch }} `${{ github.event.workflow_run.head_sha }}`
+
+# This workflow tags and drafts the release. Go: Release workflow takes the tag and uploads the binaries.
+
 on:
   workflow_run:
     workflows: ["Go"]
@@ -10,7 +13,9 @@ on:
 concurrency:
   group: release-please-${{ github.ref }}
 
-# This workflow tags and drafts the release. Go: Release workflow takes the tag and uploads the binaries.
+permissions:
+  contents: read
+
 
 jobs:
   release-please:
@@ -32,6 +37,8 @@ jobs:
     runs-on: ubuntu-latest
 
     if: github.event.workflow_run.conclusion == 'failure'
+
+    permissions: {}
 
     steps:
       - run: |

@@ -2,6 +2,9 @@ name: "Go: Cache Warmup"
 on:
   workflow_call: {}
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Cache Warmup
