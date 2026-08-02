@@ -22,7 +22,6 @@ linters:
     - sloglint
     - testifylint
     - testpackage
-    - thelper
     - tparallel
     - unconvert
     - usestdlibvars
