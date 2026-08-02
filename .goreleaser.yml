@@ -1,0 +1,35 @@
+version: 2
+
+project_name: gou
+
+git:
+  tag_sort: -version:creatordate
+
+builds:
+  - binary: gou
+    ldflags:
+      - -s -w # Disable symbol table and DWARF.
+      - -extldflags -static # Build statically.
+    flags:
+      - -trimpath
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    mod_timestamp: "{{ .CommitTimestamp }}"
+
+checksum:
+  split: true
+
+release:
+  github: {}
+  mode: append
+  prerelease: auto
+
+changelog:
+  disable: true

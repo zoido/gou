@@ -39,5 +39,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gomod-
 
-      - run: |
-          go build -v .
+      - name: Build
+        uses: goreleaser/goreleaser-action@v7
+        with:
+          version: '~> v2'
+          args: build --clean --snapshot
