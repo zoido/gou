@@ -1,13 +1,21 @@
-name: "Go: Build"
+name: "Go: Release"
 on:
   workflow_call: {}
+  workflow_dispatch: {}
+  push:
+    tags:
+      # Release workflow tags and drafts the reelase.
+      # This workflow fills builds artifacts and publishes the release
+      - v*
 
 jobs:
   build:
-    name: Build
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-tags: true
 
       - uses: actions/setup-go@v7
         with:
@@ -41,4 +49,4 @@ jobs:
       - name: Build
         uses: goreleaser/goreleaser-action@v7
         with:
-          args: build --clean --snapshot
+          args: release --clean --snapshot

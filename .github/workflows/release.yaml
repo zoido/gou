@@ -10,6 +10,8 @@ on:
 concurrency:
   group: release-please-${{ github.ref }}
 
+# This workflow tags and drafts the release. Go: Release workflow takes the tag and uploads the binaries.
+
 jobs:
   release-please:
     name: Release Please
