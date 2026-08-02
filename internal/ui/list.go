@@ -7,7 +7,7 @@ import (
 	"charm.land/bubbles/v2/list"
 	tea "charm.land/bubbletea/v2"
 
-	"github.com/zoido/gou/internal/domain/finding"
+	"github.com/zoido/gou/internal/model"
 )
 
 // ErrNoSelection is returned when the user quits the picker without selecting an item.
@@ -16,18 +16,18 @@ var ErrNoSelection = errors.New("no finding selected")
 const extraHeight = 4 // title=2, help=2
 
 type item struct {
-	v *finding.Finding
+	v *model.Finding
 }
 
 func (i item) Title() string       { return i.v.URL() }
 func (i item) Description() string { return "" }
 func (i item) FilterValue() string { return i.v.URL() }
 
-type dispatchFn func(string, finding.Finding) (doQuit bool, err error)
+type dispatchFn func(string, model.Finding) (doQuit bool, err error)
 
 func Serve(
 	ctx context.Context,
-	findings []finding.Finding,
+	findings []model.Finding,
 	dispatch dispatchFn,
 ) error {
 	items := make([]list.Item, len(findings))
@@ -70,7 +70,7 @@ func Serve(
 
 type Model struct {
 	listModel list.Model
-	findings  []finding.Finding
+	findings  []model.Finding
 	dispatch  dispatchFn
 }
 

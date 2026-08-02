@@ -8,13 +8,13 @@ import (
 	"slices"
 	"sync"
 
-	"github.com/zoido/gou/internal/domain/finding"
+	"github.com/zoido/gou/internal/model"
 	"mvdan.cc/xurls/v2"
 )
 
 var urlRe = xurls.Relaxed()
 
-func FindURLs(ctx context.Context, r io.Reader) ([]finding.Finding, error) {
+func FindURLs(ctx context.Context, r io.Reader) ([]model.Finding, error) {
 	lines := make(chan []byte)
 	defer close(lines)
 	errs := make(chan error)
@@ -30,7 +30,7 @@ func FindURLs(ctx context.Context, r io.Reader) ([]finding.Finding, error) {
 		errs <- scanner.Err()
 	})
 
-	findings := make([]finding.Finding, 0, 10) // Preallocate some.
+	findings := make([]model.Finding, 0, 10) // Preallocate some.
 
 	for {
 		select {
@@ -45,7 +45,7 @@ func FindURLs(ctx context.Context, r io.Reader) ([]finding.Finding, error) {
 		case line := <-lines:
 			matches := urlRe.FindAll(line, -1)
 			for _, m := range matches {
-				f, err := finding.Builder{
+				f, err := model.Builder{
 					URL: string(m),
 				}.Build()
 				if err != nil {

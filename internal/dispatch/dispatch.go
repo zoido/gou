@@ -6,7 +6,7 @@ import (
 	osc52 "github.com/aymanbagabas/go-osc52/v2"
 	"github.com/rkoesters/xdg"
 
-	"github.com/zoido/gou/internal/domain/finding"
+	"github.com/zoido/gou/internal/model"
 )
 
 type Dispatcher struct{}
@@ -15,7 +15,7 @@ func NewDispatcher() *Dispatcher {
 	return &Dispatcher{}
 }
 
-func (d *Dispatcher) Dispatch(key string, f finding.Finding) (bool, error) {
+func (d *Dispatcher) Dispatch(key string, f model.Finding) (bool, error) {
 	doQuit := false
 
 	switch key {
