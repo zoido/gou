@@ -16,3 +16,7 @@ jobs:
   test:
     name: "Go: Test"
     uses: ./.github/workflows/go-test.yaml
+
+  mod-tidy:
+    name: "Go: Check go.mod"
+    uses: ./.github/workflows/go-mod-tidy.yaml

@@ -1,0 +1,32 @@
+name: "Go: Check go.mod"
+on:
+  workflow_call: {}
+
+jobs:
+  build:
+    name: Chech go.mod
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          cache: false
+          go-version-file: go.mod
+
+
+      - id: go-cache-paths
+        run: |
+          echo "go-mod=$(go env GOMODCACHE)" >> $GITHUB_OUTPUT
+          mkdir -p "$(go env GOMODCACHE)"
+
+      - name: Go Mod Cache
+        uses: actions/cache@v6
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
+          key: ${{ runner.os }}-gobuild-mod-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-gobuild-mod-
+
+      - run: |
+          go mod tidy -diff
