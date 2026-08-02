@@ -1,4 +1,4 @@
-# Go[U]
+# Go\[U\]
 
 Go to URL. Small program that allows open URLs in terminal without touching the mouse.
 Designed to be used along terminal multiplexers.
