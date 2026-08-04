@@ -26,25 +26,25 @@ func (PrintUsageError) Error() string {
 
 // ParseConfig parses the command-line arguments and environment variables and returns
 // the configuration.
-func ParseConfig(args []string) (Config, error) {
-	cfg := Config{}
+func ParseConfig(args []string) (*Config, error) {
+	cfg := &Config{}
 
 	y := yag.New()
 	cfg.register(y)
 
 	err := y.Parse(args)
 	if errors.Is(err, yag.ErrHelp) {
-		return Config{}, PrintUsageError{Usage: y.Usage()}
+		return nil, PrintUsageError{Usage: y.Usage()}
 	}
 	if err != nil {
-		return Config{}, err
+		return nil, err
 	}
 
 	return cfg, nil
 }
 
 // LogValue implements the [slog.LogValuer] interface.
-func (cfg Config) LogValue() slog.Value {
+func (cfg *Config) LogValue() slog.Value {
 	return slog.GroupValue(
 		slog.String("file", cfg.File),
 		slog.Bool("debug", cfg.Debug),

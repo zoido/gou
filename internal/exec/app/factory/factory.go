@@ -22,7 +22,7 @@ type InputOpener func() (io.ReadCloser, error)
 // Factory is a struct for creating application components. It's a sole provider of the component
 // instances.
 type Factory struct {
-	cfg config.Config
+	cfg *config.Config
 
 	// InputOpener returns function that opens configured input stream for reading.
 	InputOpener func() InputOpener
@@ -35,7 +35,7 @@ type Factory struct {
 }
 
 // New returns a new [Factory] using the provided [cfg].
-func New(cfg config.Config) *Factory {
+func New(cfg *config.Config) *Factory {
 	f := &Factory{cfg: cfg}
 	f.InputOpener = sync.OnceValue(f.createInputOpener)
 	f.Dispatcher = sync.OnceValue(f.createDispatcher)

@@ -12,7 +12,7 @@ import (
 func TestParseConfig(t *testing.T) {
 	type testCase struct {
 		args []string
-		want config.Config
+		want *config.Config
 	}
 
 	run := func(t *testing.T, tc testCase) {
@@ -27,10 +27,11 @@ func TestParseConfig(t *testing.T) {
 	testCases := map[string]testCase{
 		"no arguments": {
 			args: []string{},
+			want: &config.Config{},
 		},
 		"file flag": {
 			args: []string{"-file", "input.txt"},
-			want: config.Config{File: "input.txt"},
+			want: &config.Config{File: "input.txt"},
 		},
 	}
 
