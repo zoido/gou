@@ -8,6 +8,7 @@ import (
 	"sync"
 
 	"github.com/lmittmann/tint"
+
 	"github.com/zoido/gou/internal/dispatch"
 	"github.com/zoido/gou/internal/exec/app/config"
 )
@@ -67,5 +68,5 @@ func (f *Factory) createSlogHandler() slog.Handler {
 	if f.cfg.Debug {
 		level = slog.LevelDebug
 	}
-	return tint.NewHandler(os.Stderr, &tint.Options{Level: level})
+	return tint.NewTextHandler(os.Stderr, &tint.Options{Level: level})
 }
