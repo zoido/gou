@@ -14,6 +14,6 @@ An alternative to [urlscan][1] or [urlview][2].
 
 ## Shoulders of Giants
 
-Combines the prior work done available.
+Combines the prior available work.
 
 - [xurls](mvdan.cc/xurls/v2)
