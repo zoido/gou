@@ -2,11 +2,9 @@ name: "Go: Release"
 on:
   workflow_call: {}
   workflow_dispatch: {}
-  push:
-    tags:
-      # Release workflow tags and drafts the reelase.
-      # This workflow fills builds artifacts and publishes the release
-      - v*
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -54,3 +52,5 @@ jobs:
         uses: goreleaser/goreleaser-action@v7
         with:
           args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
