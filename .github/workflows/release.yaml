@@ -1,8 +1,6 @@
 name: Release
 run-name: Process Release on ${{ github.event.workflow_run.head_branch }} `${{ github.event.workflow_run.head_sha }}`
 
-# This workflow tags and drafts the release. Go: Release workflow takes the tag and uploads the binaries.
-
 on:
   workflow_run:
     workflows: ["Go"]
@@ -44,3 +42,13 @@ jobs:
       - run: |
           echo "::error ::Cannot release unless 'Go' workflow suceeds!"
           exit 1
+
+  go-release:
+    name: "Go: Release"
+    needs: release-please
+    if: needs.release-please.outputs.releases_created == 'true'
+
+    permissions:
+      contents: write
+
+    uses: ./.github/workflows/go-release.yaml
