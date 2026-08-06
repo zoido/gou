@@ -14,6 +14,7 @@ func TestDispatcher_Dispatch(t *testing.T) {
 	type testCase struct {
 		dispatcher dispatch.Dispatcher
 		key        string
+		wantFound  bool
 		wantDoQuit bool
 		wantErr    any
 	}
@@ -26,11 +27,12 @@ func TestDispatcher_Dispatch(t *testing.T) {
 		}
 
 		// When
-		gotDoQuit, err := tc.dispatcher.Dispatch(tc.key, f)
+		gotFound, gotDoQuit, err := tc.dispatcher.Dispatch(tc.key, f)
 
 		// Then
 		be.Err(t, err, tc.wantErr)
-		be.Equal(t, gotDoQuit, tc.wantDoQuit)
+		be.Equal(t, tc.wantDoQuit, gotDoQuit)
+		be.Equal(t, tc.wantFound, gotFound)
 	}
 
 	testCases := map[string]testCase{
@@ -39,6 +41,7 @@ func TestDispatcher_Dispatch(t *testing.T) {
 				"q": func(model.Finding) (bool, error) { return true, nil },
 			},
 			key:        "q",
+			wantFound:  true,
 			wantDoQuit: true,
 		},
 		"known key returns false result": {
@@ -46,6 +49,7 @@ func TestDispatcher_Dispatch(t *testing.T) {
 				"o": func(model.Finding) (bool, error) { return false, nil },
 			},
 			key:        "o",
+			wantFound:  true,
 			wantDoQuit: false,
 		},
 		"unknown key is a no-op": {
@@ -53,12 +57,14 @@ func TestDispatcher_Dispatch(t *testing.T) {
 				"q": func(model.Finding) (bool, error) { return true, errors.New("an error") },
 			},
 			key:        "x",
+			wantFound:  false,
 			wantDoQuit: false,
 			wantErr:    nil,
 		},
 		"empty dispatcher is a no-op": {
 			dispatcher: dispatch.Dispatcher{},
 			key:        "q",
+			wantFound:  false,
 			wantDoQuit: false,
 		},
 		"action error is propagated": {
@@ -66,6 +72,7 @@ func TestDispatcher_Dispatch(t *testing.T) {
 				"e": func(model.Finding) (bool, error) { return false, errors.New("test error") },
 			},
 			key:        "e",
+			wantFound:  true,
 			wantDoQuit: false,
 			wantErr:    "test error",
 		},
@@ -91,7 +98,7 @@ func TestDispatcher_Dispatch_PassesFinding(t *testing.T) {
 	}
 
 	// When
-	_, err = d.Dispatch("o", f)
+	_, _, err = d.Dispatch("o", f)
 
 	// Then
 	be.Err(t, err, nil)

@@ -12,9 +12,14 @@ type Dispatcher map[string]Action
 type Action func(model.Finding) (bool, error)
 
 // Dispatch performs the action associated with the key press and returns its result.
-func (d Dispatcher) Dispatch(key string, f model.Finding) (bool, error) {
-	if a, ok := d[key]; ok {
-		return a(f)
+func (d Dispatcher) Dispatch(key string, f model.Finding) (bool, bool, error) {
+	a, ok := d[key]
+	if !ok {
+		return false, false, nil
 	}
-	return false, nil
+	doQuit, err := a(f)
+	if err != nil {
+		return true, false, err
+	}
+	return true, doQuit, nil
 }
