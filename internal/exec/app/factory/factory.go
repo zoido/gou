@@ -11,6 +11,7 @@ import (
 
 	"github.com/zoido/gou/internal/dispatch"
 	"github.com/zoido/gou/internal/exec/app/config"
+	"github.com/zoido/gou/internal/ui"
 )
 
 // InputOpener is function that opens the open opens the configured input for reading.
@@ -24,22 +25,28 @@ type InputOpener func() (io.ReadCloser, error)
 type Factory struct {
 	cfg *config.Config
 
+	dispatcher func() dispatch.Dispatcher
+
 	// InputOpener returns function that opens configured input stream for reading.
 	InputOpener func() InputOpener
 
-	// Dispatcher returns action dispatcher.
-	Dispatcher func() dispatch.Dispatcher
-
 	// LogHandler returns configured [slog.Handler].
 	SlogHandler func() slog.Handler
+
+	// Program returns instance of the program.
+	Program func() *ui.Program
 }
 
 // New returns a new [Factory] using the provided [cfg].
 func New(cfg *config.Config) *Factory {
 	f := &Factory{cfg: cfg}
+
+	f.dispatcher = sync.OnceValue(f.createDispatcher)
+
 	f.InputOpener = sync.OnceValue(f.createInputOpener)
-	f.Dispatcher = sync.OnceValue(f.createDispatcher)
 	f.SlogHandler = sync.OnceValue(f.createSlogHandler)
+	f.Program = sync.OnceValue(f.createProgram)
+
 	return f
 }
 
@@ -61,6 +68,11 @@ func (f *Factory) createInputOpener() InputOpener {
 
 func (*Factory) createDispatcher() dispatch.Dispatcher {
 	return make(dispatch.Dispatcher)
+}
+
+func (f *Factory) createProgram() *ui.Program {
+	d := f.dispatcher()
+	return ui.NewProgram(d.Dispatch)
 }
 
 func (f *Factory) createSlogHandler() slog.Handler {

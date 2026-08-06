@@ -17,3 +17,4 @@ An alternative to [urlscan][1] or [urlview][2].
 Combines the prior available work.
 
 - [xurls](mvdan.cc/xurls/v2)
+- [charm.land](https://charm.land/)
