@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.0](https://github.com/zoido/gou/compare/v0.3.0...v1.0.0) (2026-08-07)
+
+
+### Features
+
+* Default open and yank actions ([#35](https://github.com/zoido/gou/issues/35)) ([2956306](https://github.com/zoido/gou/commit/295630613b9e9abe5bad200c9a0d9db2e58228dd))
+
 ## [0.3.0](https://github.com/zoido/gou/compare/v0.2.0...v0.3.0) (2026-08-07)
 
 
