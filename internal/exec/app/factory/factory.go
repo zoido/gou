@@ -3,14 +3,18 @@ package factory
 import (
 	"io"
 	"log/slog"
+	"maps"
 	"os"
 	"path/filepath"
 	"sync"
 
+	osc52 "github.com/aymanbagabas/go-osc52/v2"
 	"github.com/lmittmann/tint"
+	"github.com/rkoesters/xdg"
 
 	"github.com/zoido/gou/internal/dispatch"
 	"github.com/zoido/gou/internal/exec/app/config"
+	"github.com/zoido/gou/internal/model"
 	"github.com/zoido/gou/internal/ui"
 )
 
@@ -66,8 +70,18 @@ func (f *Factory) createInputOpener() InputOpener {
 	}
 }
 
+var defaultDispatcher = dispatch.Dispatcher{
+	"o": func(f model.Finding) (bool, error) {
+		return false, xdg.Open(f.URL())
+	},
+	"y": func(f model.Finding) (bool, error) {
+		_, err := osc52.New(f.URL()).WriteTo(os.Stderr)
+		return false, err
+	},
+}
+
 func (*Factory) createDispatcher() dispatch.Dispatcher {
-	return make(dispatch.Dispatcher)
+	return maps.Clone(defaultDispatcher)
 }
 
 func (f *Factory) createProgram() *ui.Program {
