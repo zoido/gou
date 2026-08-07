@@ -26,9 +26,13 @@ jobs:
       contents: write
       pull-requests: write
 
+    outputs:
+      releases_created: ${{ steps.release.outputs.releases_created }}
+
     steps:
       - uses: actions/checkout@v7
-      - uses: googleapis/release-please-action@v5
+      - id: release
+        uses: googleapis/release-please-action@v5
 
   fail-release:
     name: Fail Release
