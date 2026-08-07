@@ -53,7 +53,6 @@ func Run(ctx context.Context, args []string) error {
 	if err != nil {
 		return fmt.Errorf("opening input: %v", err)
 	}
-
 	closeInput := sync.OnceFunc(func() {
 		if err := reader.Close(); err != nil {
 			slog.Warn("Failed closing input", "error", err)
@@ -69,9 +68,11 @@ func Run(ctx context.Context, args []string) error {
 			return err
 		}
 
-		for _, f := range findings {
-			slog.Info("Found URL", "url", f.URL())
+		err = f.Program().Run(grpCtx, findings)
+		if err != nil {
+			return err
 		}
+
 		close(success)
 		return nil
 	})
@@ -82,7 +83,7 @@ func Run(ctx context.Context, args []string) error {
 	case <-ctx.Done():
 		slog.Debug(fmt.Sprintf("%v, shutting down", context.Cause(ctx)))
 	case <-success:
-		// All good just shutdown.
+		slog.Debug("Program exit.")
 	}
 
 	stopHandlingSignals()
