@@ -5,8 +5,10 @@ go 1.26.4
 require (
 	charm.land/bubbles/v2 v2.1.1
 	charm.land/bubbletea/v2 v2.0.8
+	github.com/aymanbagabas/go-osc52/v2 v2.0.1
 	github.com/lmittmann/tint v1.2.0
 	github.com/nalgeon/be v0.3.0
+	github.com/rkoesters/xdg v0.0.1
 	github.com/zoido/yag-config v1.0.0
 	golang.org/x/sync v0.21.0
 	mvdan.cc/xurls/v2 v2.6.0

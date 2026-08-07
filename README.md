@@ -18,3 +18,13 @@ Combines the prior available work.
 
 - [xurls](mvdan.cc/xurls/v2)
 - [charm.land](https://charm.land/)
+- [aymanbagabas/go-osc52](https://github.com/aymanbagabas/go-osc52/v2 )
+- [github.com/rkoesters/xdg](https://github.com/rkoesters/xdg)
+
+## Keys
+
+- `q`: quit
+- `y`: copy to clipboard via OSC 52 escape sequence.
+- `o`: open URL with [XDG](https://en.wikipedia.org/wiki/Freedesktop.org)
+
+More will be available when customisation is implemented.
