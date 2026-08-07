@@ -1,12 +1,5 @@
 # Changelog
 
-## [0.3.0](https://github.com/zoido/gou/compare/v0.2.0...v0.3.0) (2026-08-07)
-
-
-### Features
-
-* Show UI with found URLs ([#24](https://github.com/zoido/gou/issues/24)) ([ce9d63f](https://github.com/zoido/gou/commit/ce9d63f42af3f9723ea0f6e21894e14aac9dc819))
-
 ## [0.2.0](https://github.com/zoido/gou/compare/v0.1.0...v0.2.0) (2026-08-04)
 
 
