@@ -63,10 +63,6 @@ func (m wrapper) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m wrapper) handleKeys(kp tea.KeyPressMsg) (tea.Model, tea.Cmd) {
-	if kp.String() == "ctrl+c" {
-		// Always handle Ctrl+C to avoid inescapable program.
-		return m, tea.Quit
-	}
 	var cmd tea.Cmd
 	i := m.list.Index()
 	handled, doQuit, err := m.dispatch(kp.String(), m.findings[i])
