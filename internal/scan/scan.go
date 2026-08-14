@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"log/slog"
+	"regexp"
 	"slices"
 	"sync"
 
@@ -13,10 +14,25 @@ import (
 	"github.com/zoido/gou/internal/model"
 )
 
-var urlRe = xurls.Strict()
+// FindFn scans trough [r] and returns found URLs as a slice of [model.Finding].
+type FindFn func(ctx context.Context, r io.Reader) ([]model.Finding, error)
 
-// FindURLs scans trough [r] and returns found URLs as a slice of [model.Finding].
-func FindURLs(ctx context.Context, r io.Reader) ([]model.Finding, error) {
+// NewStrictFinder returns [FindFn] that returns only proper URLs, the ones with scheme.
+func NewStrictFinder() FindFn {
+	return finder{xurls.Strict()}.find
+}
+
+// NewLaxFinder returns [FindFn] that returns all URL like strings.
+// For example example.com/path like strings.
+func NewLaxFinder() FindFn {
+	return finder{xurls.Relaxed()}.find
+}
+
+type finder struct {
+	re *regexp.Regexp
+}
+
+func (f finder) find(ctx context.Context, r io.Reader) ([]model.Finding, error) {
 	lines := make(chan []byte)
 	errs := make(chan error)
 
@@ -43,7 +59,7 @@ func FindURLs(ctx context.Context, r io.Reader) ([]model.Finding, error) {
 	for {
 		select {
 		case line := <-lines:
-			matches := urlRe.FindAll(line, -1)
+			matches := f.re.FindAll(line, -1)
 			for _, m := range matches {
 				f, err := model.Builder{
 					URL: string(m),

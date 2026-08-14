@@ -15,6 +15,7 @@ import (
 	"github.com/zoido/gou/internal/dispatch"
 	"github.com/zoido/gou/internal/exec/app/config"
 	"github.com/zoido/gou/internal/model"
+	"github.com/zoido/gou/internal/scan"
 	"github.com/zoido/gou/internal/ui"
 )
 
@@ -31,11 +32,14 @@ type Factory struct {
 
 	dispatcher func() dispatch.Dispatcher
 
+	// LogHandler returns configured [slog.Handler].
+	SlogHandler func() slog.Handler
+
 	// InputOpener returns function that opens configured input stream for reading.
 	InputOpener func() InputOpener
 
-	// LogHandler returns configured [slog.Handler].
-	SlogHandler func() slog.Handler
+	// Finder returns function that scans the input stream to return the matches.
+	Finder func() scan.FindFn
 
 	// Program returns instance of the program.
 	Program func() *ui.Program
@@ -50,6 +54,7 @@ func New(cfg *config.Config) *Factory {
 	f.InputOpener = sync.OnceValue(f.createInputOpener)
 	f.SlogHandler = sync.OnceValue(f.createSlogHandler)
 	f.Program = sync.OnceValue(f.createProgram)
+	f.Finder = sync.OnceValue(f.createFinder)
 
 	return f
 }
@@ -103,4 +108,15 @@ func (f *Factory) createSlogHandler() slog.Handler {
 		level = slog.LevelDebug
 	}
 	return tint.NewTextHandler(os.Stderr, &tint.Options{Level: level})
+}
+
+func (f *Factory) createFinder() scan.FindFn {
+	switch {
+	case f.cfg.Strict:
+		return scan.NewStrictFinder()
+	case f.cfg.Lax:
+		return scan.NewLaxFinder()
+	default:
+		return scan.NewStrictFinder()
+	}
 }

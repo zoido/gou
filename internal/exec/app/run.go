@@ -15,7 +15,6 @@ import (
 
 	"github.com/zoido/gou/internal/exec/app/config"
 	"github.com/zoido/gou/internal/exec/app/factory"
-	"github.com/zoido/gou/internal/scan"
 )
 
 var (
@@ -62,7 +61,7 @@ func Run(ctx context.Context, args []string) error {
 	grp, grpCtx := errgroup.WithContext(ctx)
 	success := make(chan struct{})
 	grp.Go(func() error {
-		findings, err := scan.FindURLs(grpCtx, reader)
+		findings, err := f.Finder()(grpCtx, reader)
 		closeInput() // We don't need it anymore so we do not need to hold it.
 		if err != nil {
 			return err

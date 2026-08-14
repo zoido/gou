@@ -9,8 +9,10 @@ import (
 
 // Config represents the configuration for the gou application.
 type Config struct {
-	File  string
-	Debug bool
+	File   string
+	Debug  bool
+	Strict bool
+	Lax    bool
 }
 
 // PrintUsageError is an error type used to indicate that the usage of the application
@@ -54,4 +56,6 @@ func (cfg *Config) LogValue() slog.Value {
 func (cfg *Config) register(y *yag.Parser) {
 	y.String(&cfg.File, "file", "File where to scan for URLs, if not provided STDIN is used.")
 	y.Bool(&cfg.Debug, "debug", "Show debugging output.")
+	y.Bool(&cfg.Strict, "strict", "Match only proper URLs with schema.")
+	y.Bool(&cfg.Lax, "lax", "Match all URL like strings.")
 }
