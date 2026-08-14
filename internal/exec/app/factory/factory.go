@@ -80,8 +80,16 @@ var defaultDispatcher = dispatch.Dispatcher{
 	},
 }
 
+var alwaysQuit = dispatch.Dispatcher{
+	"ctrl+c": func(model.Finding) (bool, error) {
+		return true, nil
+	},
+}
+
 func (*Factory) createDispatcher() dispatch.Dispatcher {
-	return maps.Clone(defaultDispatcher)
+	dp := maps.Clone(defaultDispatcher)
+	maps.Copy(dp, alwaysQuit) // Always quit on Ctrl+C to avoid inescapable program.
+	return dp
 }
 
 func (f *Factory) createProgram() *ui.Program {
