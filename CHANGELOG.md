@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/zoido/gou/compare/v1.0.0...v1.1.0) (2026-08-14)
+
+
+### Features
+
+* Allow to use lax matcher via flag ([#39](https://github.com/zoido/gou/issues/39)) ([8aff304](https://github.com/zoido/gou/commit/8aff30467ff947b5ac13e9cd8f34a6105aa766ea))
+
+
+### Bug Fixes
+
+* Use strict urls by default ([#38](https://github.com/zoido/gou/issues/38)) ([9623dc7](https://github.com/zoido/gou/commit/9623dc7539d26fba916bab6a8022991e43e77e98))
+
 ## [1.0.0](https://github.com/zoido/gou/compare/v0.3.0...v1.0.0) (2026-08-07)
 
 
