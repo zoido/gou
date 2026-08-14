@@ -13,7 +13,7 @@ import (
 	"github.com/zoido/gou/internal/model"
 )
 
-var urlRe = xurls.Relaxed()
+var urlRe = xurls.Strict()
 
 // FindURLs scans trough [r] and returns found URLs as a slice of [model.Finding].
 func FindURLs(ctx context.Context, r io.Reader) ([]model.Finding, error) {
