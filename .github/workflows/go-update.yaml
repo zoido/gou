@@ -41,7 +41,7 @@ jobs:
 
           version="$(go mod edit -json | jq -r .Go)"
           branch="go-patch/go${version}"
-          
+
           echo "version=${version}" >> "$GITHUB_OUTPUT"
           echo "branch=${branch}" >> "$GITHUB_OUTPUT"
 
@@ -87,4 +87,4 @@ jobs:
           gh pr create \
             --base "${{ github.event.repository.default_branch }}" \
             --head "${branch}" \
-            --title "fix(deps): ⬆️ update Go to ${version}"
+            --fill
