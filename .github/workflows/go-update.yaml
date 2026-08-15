@@ -1,0 +1,90 @@
+name: "Go: Update Version"
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+concurrency:
+  group: go-update
+
+permissions:
+  contents: read
+
+jobs:
+  update:
+    name: Update Go Version
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v7
+        with:
+          cache: false
+          go-version: stable
+
+      - name: Update Go directive
+        id: update
+        env:
+          GOTOOLCHAIN: auto
+        run: |
+          old_version="$(go mod edit -json | jq -r .Go)"
+          go get -u=patch go
+          go mod tidy
+
+          version="$(go mod edit -json | jq -r .Go)"
+          branch="go-patch/go${version}"
+          
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "branch=${branch}" >> "$GITHUB_OUTPUT"
+
+          if [ "${old_version}" = "${version}" ]; then
+            echo "::notice ::Go ${version} is the latest patch release already."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check for existing pull request
+        id: existing-pr
+        if: steps.update.outputs.changed == 'true'
+        run: |
+          count="$(gh pr list \
+            --head "${{ steps.update.outputs.branch }}" \
+            --state open \
+            --json number \
+            --jq 'length')"
+
+          if [ "${count}" != "0" ]; then
+            echo "::notice ::Pull request for Go ${{ steps.update.outputs.version }} is open already."
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit and push
+        if: steps.update.outputs.changed == 'true' && steps.existing-pr.outputs.exists == 'false'
+        env:
+          version: ${{ steps.update.outputs.version }}
+        run: |
+          branch=go-patch/go${version}
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git switch -c "${{ steps.update.outputs.branch }}"
+          git add go.mod go.sum
+          git commit -m "fix(deps): ⬆️ update Go to ${version}"
+          git push --set-upstream origin "${branch}"
+
+          gh pr create \
+            --base "${{ github.event.repository.default_branch }}" \
+            --head "${branch}" \
+            --title "fix(deps): ⬆️ update Go to ${version}"
