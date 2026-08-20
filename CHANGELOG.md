@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/zoido/gou/compare/v1.1.0...v1.1.1) (2026-08-20)
+
+
+### Bug Fixes
+
+* **deps:** ⬆️ update Go to 1.26.6 ([#44](https://github.com/zoido/gou/issues/44)) ([6a24335](https://github.com/zoido/gou/commit/6a243352f79804439f086cd97da3c498a7334beb))
+* **deps:** ⬆️ update Go to 1.26.7 ([#46](https://github.com/zoido/gou/issues/46)) ([61ca7ce](https://github.com/zoido/gou/commit/61ca7ce2e1b6a4d7d554ce12bf2fdad60e11ede0))
+
 ## [1.1.0](https://github.com/zoido/gou/compare/v1.0.0...v1.1.0) (2026-08-14)
 
 
